@@ -1,0 +1,47 @@
+<!DOCTYPE HTML>
+<html>
+<head></head>
+<body>
+<div style="height:100%; width:100%;">
+<div id ="flash" style="position:absolute; left:0px; top:0px; width:0px; height:0px; z-index:+2; background-image:radial-gradient(white, blue);"></div>
+<img src="background.jpg" style = "position:absolute; width:100%; height:100%; left:0px; top:0px; object-fit:fill; z-index:-1;">
+<img id = "lightning" src="lightning.png" style = "position:absolute; width:0%; height:0%; left:0px, top:0px; z-index:1; object-fit:fill;">
+<img src="sign.png" style="width:500px; position:absolute; left:400px;">
+<img src="pillar.png" style="position:absolute; left:0px; top:0px; height:650px;">
+<img src="pillar.png" style="position:absolute; left:800px; top:0px; height:650px;">
+<p id = "insult" style="background-color: red; font-size: 50px; color: black; position:absolute; top:300px; left:300px; z-index:1;"></p>
+<div style = "z-index:3; background-color:rgb(255, 200, 200); width:200px; outline:6px outset rgb(255, 100, 100); position:absolute; left:550px; top:500px">
+<form>
+<label for = "name"> name</input><br>
+<input type="text" id="name" style="background-color:rgb(200, 200, 200)">
+<label for = "box"> Issue</input><br>
+<input type ="text" id = "box" style="height:50px; background-color:rgb(200, 200, 200)">
+<button type="button"; onclick= "complain()" style = "background-color:rgb(175, 175, 175)"> submit </button>
+</form>
+</div>
+</div>
+</body>
+<script>
+function unflash(){
+	document.getElementById("flash").style.width = 0 + 'px';
+	document.getElementById("flash").style.height = 0 + 'px';
+	document.getElementById("lightning").style.height = 100 + '%'
+	document.getElementById("lightning").style.width = 100 + '%'
+}
+function flash(){
+ 	document.getElementById("flash").style.width = 100 + '%';
+	document.getElementById("flash").style.height = 100 + '%';
+}
+function complain(){
+	for (let i = 0; i<3; i++){
+		setTimeout(flash,  200+ i*300)
+		setTimeout(unflash, 300 + i*300)
+	
+	}
+	setTimeout(function func(){	document.getElementById("lightning").style.height = 0 + '%'; document.getElementById("lightning").style.width = 0 + '%'}, 900)
+	var name = document.getElementById("name").value;
+	document.getElementById("insult").innerHTML = "fuck off " + name;
+}
+
+</script>
+</html>

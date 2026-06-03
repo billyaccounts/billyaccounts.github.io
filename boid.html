@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<html>
+<body>
+
+<div id = "container" style = "width:1500px; height:600px">
+<img src = "sky.jpg" style= "position:absolute; width:100%; height:100%; left:0px; top:0px;">
+<div class="slidecontainer" style = "background-color:rgb(200, 200, 200);position:absolute; z-index:1; height:200px; width:120px; left:10px">
+    <br>
+  <label for="turnslide">--alignment</label>
+  <input type="range" min="1" step = "1" max="75" class="slider" id="turnslide" oninput = "tslide()" style = "direction:rtl; top:0px; left:0px; width:100px; height:100px; position:absolute; z-index:1;"><br><br><br>
+  <label for="censlide"> --cohesion</label>
+  <input type="range" min="1" max="100" class="slider" id="censlide" oninput = "cslide()" style = "direction:rtl; top:55px;left:0px; width:100px; height:100px; position:absolute; z-index:1;"><br><br><br>
+  <label for="sepslide"> --seperation</label>
+  <input type="range" min="1" max="100" class="slider" id="sepslide" oninput = "sslide()" style = "width:100px; top:110px; left:0px; height:100px; position:absolute; z-index:1;">
+</div>
+</div>
+
+<img id = "eagle" src = "eagle.png" style = "position:absolute; width:100px; height:55px; left:100px; top:100px;">
+</body>
+<script>
+document.getElementById("container").style.width = window.innerWidth
+document.getElementById("container").style.height = window.innerHeight
+setInterval(run, 50)
+let bnum = 75;
+let t = 10;
+let c = 18;
+let s = 50;
+let maxspeed = 25;
+let minspeed = 10;
+let width = parseInt(document.getElementById("container").style.width)
+let height = parseInt(document.getElementById("container").style.height)
+for (let i=0; i<bnum; i++){
+	let bird = document.createElement("img")
+	bird.id = i
+	bird.src = "bird.png"
+	bird.style = "position:absolute; rotate:0rad; left:"+i*10+"px; top:"+i*10+"px;"
+	document.getElementById("container").appendChild(bird)
+}
+function mod(num1, num2){
+    if (num1>=num2){
+        return (num1 - num2);
+    }if (num1<0){
+        return num2 + num1;
+    }else{
+        return num1
+    }
+}
+let movelist = []
+for (let i=0; i<bnum; i++){
+	movelist.push([0, 0, 0])
+}
+function turn(bird, mx, my){
+	if (Math.abs(mx)>0.5 && Math.abs(my)>0.5){
+		let angle = Math.atan2(my, mx) - 3/2* Math.PI
+		bird.style.rotate = "0rad"
+		bird.style.rotate = angle + "rad"
+        movelist[bird.id][2] = angle
+	}
+}
+function radiuscheck(bird1, bird2, distance){
+	let x1 = parseInt(bird1.style.left)
+	let y1 = parseInt(bird1.style.top)
+	let x2 = parseInt(bird2.style.left)
+	let y2 = parseInt(bird2.style.top)
+    let xdis= 0
+    let ydis = 0
+    let xwall = false
+    let ywall = false
+    if (Math.abs(x1-x2)>width/2){
+        xwall = true
+        if(x1<x2){
+            xdis = x1 +width - x2
+        }else{
+            xdis = x2 + width - x1
+        }
+    }else{
+        xdis = x2-x1
+    }
+    if (Math.abs(y1-y2)>height/2){
+        yids = y1 + height-y2
+        ywall = true
+        if(y1<y2){
+            ydis = y1 +height - y2
+        }else{
+            ydis = y2 + height - y1
+        }
+    }else{
+        ydis = y2-y1
+    }
+	let d = Math.sqrt((xdis)**2 + (ydis)**2)
+	let angle = Math.atan2(ydis, xdis) + Math.PI
+	if (d<distance){
+		return [true, d, angle, xwall, ywall]
+	}else{
+		return [false]
+	}
+}
+function cslide(){
+    c = parseInt(document.getElementById("censlide").value);
+}
+function tslide(){
+    t = parseInt(document.getElementById("turnslide").value);
+}
+function sslide(){
+    s = parseInt(document.getElementById("sepslide").value);
+}
+function seperation(bird){
+	let x = parseInt(bird.style.left)
+	let y = parseInt(bird.style.top)
+	let movex = 0
+	let movey = 0
+	let centre = [0,0];
+	let total = [0, 0];
+	let count = 0;
+	let r = 85;
+    let totangle = 0;
+	for (let i=0; i<bnum; i++){
+		let nbird = document.getElementById(i)
+		if (i != parseInt(bird.id)){
+			let x1 = parseInt(nbird.style.left)
+			let y1 = parseInt(nbird.style.top)
+			let checkres = radiuscheck(bird, nbird, r)
+			if (checkres[0]){
+				movex = movex + Math.cos(checkres[2])*(s/checkres[1])
+				movey = movey + Math.sin(checkres[2])*(s/checkres[1])
+			}
+		}
+        let nbirdx = parseInt(nbird.style.left)
+        let nbirdy = parseInt(nbird.style.top)
+        let rcheck = radiuscheck(bird, nbird, 300)
+		if (rcheck[0]){
+                if(rcheck[3]){
+                    if (nbirdx<x){
+                        total[0] = total[0] + width+width - nbirdx
+                    }else{
+                        total[0] = total[0] - (width - nbirdx)
+                    }
+                }else{
+                    total[0] = total[0] + nbirdx
+
+                }if(rcheck[4]){
+                    if (nbirdy<y){
+                        total[1] = total[1] + height + height - nbirdy
+                    }else{
+                        total[1] = total[1] - (height - nbirdy)
+                    }
+                }else{
+                    total[1] = total[1] + nbirdy
+
+                }
+				count = count+ 1;
+                totangle = totangle + movelist[nbird.id][2]
+		}
+	}
+	centre[0] = total[0]/count
+	centre[1] = total[1]/count
+	movex = movex + (centre[0] - x)/c
+	movey = movey + (centre[1] - y)/c
+    let eagle = document.getElementById('eagle')
+    totangle = totangle/count
+    movelist[bird.id][0] = (movelist[bird.id][0]*Math.cos(totangle) + Math.sin(totangle)*movelist[bird.id][1] + t*movelist[bird.id][0])/(t+1)
+    movelist[bird.id][1] = (-movelist[bird.id][0]*Math.sin(totangle) + Math.cos(totangle)*movelist[bird.id][1] + t*movelist[bird.id][1])/(t+1)
+
+	return [movex, movey]
+	
+}
+
+
+
+function update(){
+	for (let i=0; i<bnum; i= i+1){
+		let pbird = document.getElementById(i)
+		let move = seperation(pbird) 
+		movelist[i][0] = movelist[i][0] + move[0]
+		movelist[i][1] = movelist[i][1] + move[1]
+		if (movelist[i][0]>maxspeed){
+			movelist[i][0] = maxspeed
+		}
+		if (movelist[i][0] <-maxspeed){
+			movelist[i][0] = -maxspeed
+		}
+		if (movelist[i][1]>maxspeed){
+			movelist[i][1] = maxspeed
+		}
+		if (movelist[i][1] <-maxspeed){
+			movelist[i][1] = -maxspeed
+		}
+        if (Math.abs(movelist[i][0])<minspeed){
+            if(movelist[i][0] >0){
+                movelist[i][0] = minspeed    
+            }if(movelist[i][0] <0){
+                movelist[i][0] = -minspeed    
+            }
+        }if (Math.abs(movelist[i][1])<minspeed){
+            if(movelist[i][1] >0){
+                movelist[i][1] = minspeed    
+            }if(movelist[i][1] <0){
+                movelist[i][1] = -minspeed    
+            }
+        }
+		if (parseInt(pbird.style.left) + movelist[i][0] >0 && parseInt(pbird.style.left) + movelist[i][0]  < width){
+			pbird.style.left = parseInt(pbird.style.left) + movelist[i][0] + "px"
+        }else{
+			pbird.style.left = mod(parseInt(pbird.style.left) + movelist[i][0], width) + "px"
+        }
+        turn(pbird, movelist[i][0], movelist[i][1])
+        if (parseInt(pbird.style.top) + movelist[i][1] >0 && parseInt(pbird.style.top) + movelist[i][1] <height){ 
+			pbird.style.top = parseInt(pbird.style.top) + movelist[i][1] + "px"
+		}else{
+			pbird.style.top = mod(parseInt(pbird.style.top) + movelist[i][1], height) + "px"
+		
+		}
+		turn(pbird, movelist[i][0], movelist[i][1])
+	}
+
+}
+function run(){
+    update()
+}
+
+</script>
+</html>

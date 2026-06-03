@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html style="background-image: linear-gradient(to top, rgb(30, 30, 30), red, purple); height:100%" onmousemove = "mousepos(event)">
+<head></head>
+<body id = "main">
+<img src="title.png", width="400px">
+<h1 id="combutton"; onclick = "complaint()"; style ="background-image:url(wood.jpg); color:red; width:300px; text-align: center; outline:6px outset brown;"> complaints</h1>
+<h1 id="combutton"; onclick = "window.open('boid.html')"; style ="background-image:url(sunbird.jpg); color:red; width:300px; text-align: center; outline:6px outset brown;">Boid</h1>
+<img src="ball.png", id = "ball"; style= "width:100px; position:absolute; left:0px; top: 0px">
+<img src="batt.png", id = "batt"; style= "width:200px; position:absolute; left:0px; top: 0px">
+</body>
+<script>
+
+const ball = document.getElementById("ball");
+const batt = document.getElementById("batt");
+var battangle = 0;
+var x = 250;
+var y = 250;
+var ballx = parseInt(ball.style.left);
+var bally = parseInt(ball.style.top);
+var ballspeed = 10;
+setInterval(update, 50);
+function mousepos(event){
+	x = event.clientX
+	y = event.clientY
+}
+function move(event){
+	ballx = parseInt(ball.style.left);
+	bally = parseInt(ball.style.top);
+
+	console.log(x)
+	console.log(ballx)
+	if(x >ballx+55){
+		ball.style.left = ballx + ballspeed + 'px'
+		document.getElementById("main").style.cursor = "pointer";
+	
+	}else if(x<ballx+45){
+		ball.style.left = ballx - ballspeed + 'px'
+		document.getElementById("main").style.cursor = "pointer";	
+	}else{
+		document.getElementById("main").style.cursor = "none";
+	}
+	if(y >bally+55){
+		ball.style.top = bally + ballspeed + 'px'
+		document.getElementById("main").style.cursor = "pointer";
+	}else if(y<bally+45){
+		ball.style.top = bally - ballspeed + 'px'
+		document.getElementById("main").style.cursor = "pointer";
+	}else{
+	 document.getElementById("main").style.cursor = "none";
+	}
+}
+function update(){
+	move(event);
+}
+function complaint(){
+ var button = document.getElementById("combutton");
+ button.style.outline = "6px inset brown";
+ window.open("complaint.html");
+}
+</script>
+</html>
